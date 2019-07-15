@@ -4,19 +4,19 @@ from .Callbacks import *
 
 class Learner():
     def __init__(
-            self, 
+            self,
             model,
-            opt, 
-            loss_func, 
-            data, 
-            cbs=None, 
+            opt,
+            loss_func,
+            data,
+            cbs=None,
             cb_funcs=None):
         self.model,self.opt,self.loss_func,self.data = model,opt,loss_func,data
-        
+
         self.cbs = [TrainEvalCallback()]
         self.add_callbacks(cbs, cb_funcs)
         self.stop = False
-    
+
     def add_callbacks(self, cbs=None, cb_funcs=None):
         cbs = listify(cbs)
         for cbf in listify(cb_funcs):
@@ -62,7 +62,7 @@ class Learner():
                 with torch.no_grad(): 
                     if not self('begin_validate'): self.all_batches(self.data.valid_dl)
                 self('after_epoch')
-        
+
         except CancelTrainException: self('after_cancel_train')
         finally:
             self('after_fit')
