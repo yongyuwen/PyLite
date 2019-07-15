@@ -5,7 +5,7 @@ from .Callbacks import *
 class Learner():
     def __init__(
             self, 
-            model, 
+            model,
             opt, 
             loss_func, 
             data, 
@@ -28,16 +28,16 @@ class Learner():
     def one_batch(self, xb, yb):
         try:
             self.xb,self.yb = xb,yb
-            if self('begin_batch'): return
+            self('begin_batch')
             self.pred = self.model(self.xb)
-            if self('after_pred'): return
+            self('after_pred')
             self.loss = self.loss_func(self.pred, self.yb)
-            self('after_loss') 
+            self('after_loss')
             if not self.in_train: return
             self.loss.backward()
-            if self('after_backward'): return
+            self('after_backward')
             self.opt.step()
-            if self('after_step'): return
+            self('after_step')
             self.opt.zero_grad()
         except CancelBatchException: self('after_cancel_batch')
         finally: self('after_batch')
