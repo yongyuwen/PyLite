@@ -7,6 +7,9 @@ from .imports import *
 
 PathOrStr = Union[Path,str]
 
+# General
+def normalize(x, m, s): return (x-m)/s
+
 # Exceptions
 class CancelTrainException(Exception): pass
 class CancelEpochException(Exception): pass

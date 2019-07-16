@@ -1,5 +1,4 @@
 from .core import *
-from ..utils import *
 
 def annealer(f):
     def _inner(start, end): return partial(f, start, end)

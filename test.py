@@ -1,7 +1,20 @@
 from .utils import *
 from .data import *
+from .learner import *
+from .Callbacks import *
+from .core import *
 
 MNIST_URL='http://deeplearning.net/data/mnist/mnist.pkl'
+
+def normalize_to(train, valid):
+    m,s = train.mean(),train.std()
+    return normalize(train, m, s), normalize(valid, m, s)
+
+def mnist_resize(x): return x.view(-1, 1, 28, 28)
+
+def conv2d(ni, nf, ks=3, stride=2):
+    return nn.Sequential(
+        nn.Conv2d(ni, nf, ks, padding=ks//2, stride=stride), nn.ReLU())
 
 def get_mnist_data():
     path = download_data(MNIST_URL, 'data/mnist', ext='.gz')
