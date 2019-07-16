@@ -1,0 +1,92 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AvgStats	utils.py	/^class AvgStats():$/;"	c
+AvgStatsCallback	Callbacks/core.py	/^class AvgStatsCallback(Callback):$/;"	c
+Callback	Callbacks/core.py	/^class Callback():$/;"	c
+DataBunch	data.py	/^class DataBunch():$/;"	c
+Dataset	data.py	/^class Dataset():$/;"	c
+Learner	learner.py	/^class Learner():$/;"	c
+Learner	runner.py	/^class Learner():$/;"	c
+MB_DENOM	utils.py	/^MB_DENOM = 1048576 $/;"	v
+MNIST_URL	test.py	/^MNIST_URL='http:\/\/deeplearning.net\/data\/mnist\/mnist.pkl'$/;"	v
+ParamScheduler	Callbacks/scheduler.py	/^class ParamScheduler(Callback):$/;"	c
+PathOrStr	utils.py	/^PathOrStr = Union[Path,str]$/;"	v
+Recorder	Callbacks/core.py	/^class Recorder(Callback):$/;"	c
+Runner	runner.py	/^class Runner():$/;"	c
+TabularDataBunch	data.py	/^class TabularDataBunch(DataBunch):$/;"	c
+TestCallback	Callbacks/core.py	/^class TestCallback(Callback):$/;"	c
+TrainEvalCallback	Callbacks/core.py	/^class TrainEvalCallback(Callback):$/;"	c
+__call__	learner.py	/^    def __call__(self, cb_name):$/;"	m	class:Learner	file:
+__call__	runner.py	/^    def __call__(self, cb_name):$/;"	m	class:Runner	file:
+__getattr__	Callbacks/core.py	/^    def __getattr__(self, k): return getattr(self.run, k)$/;"	m	class:Callback	file:
+__getitem__	data.py	/^    def __getitem__(self, i): return self.x[i], self.y[i]$/;"	m	class:Dataset	file:
+__init__	Callbacks/core.py	/^    def __init__(self, metrics):$/;"	m	class:AvgStatsCallback
+__init__	Callbacks/scheduler.py	/^    def __init__(self, pname, sched_func): self.pname,self.sched_func = pname,sched_func$/;"	m	class:ParamScheduler
+__init__	data.py	/^    def __init__(self, train_dl, valid_dl, c=None):$/;"	m	class:DataBunch
+__init__	data.py	/^    def __init__(self, train_dl, valid_dl, c=None):$/;"	m	class:TabularDataBunch
+__init__	data.py	/^    def __init__(self, x:torch.Tensor, y:torch.Tensor): self.x, self.y = x, y$/;"	m	class:Dataset
+__init__	learner.py	/^    def __init__($/;"	m	class:Learner
+__init__	runner.py	/^    def __init__(self, cbs=None, cb_funcs=None):$/;"	m	class:Runner
+__init__	runner.py	/^    def __init__(self, model, opt, loss_func, data):$/;"	m	class:Learner
+__init__	utils.py	/^    def __init__(self, metrics, in_train): self.metrics,self.in_train = listify(metrics),in_train$/;"	m	class:AvgStats
+__len__	data.py	/^    def __len__(self): return len(self.x)$/;"	m	class:Dataset	file:
+__repr__	utils.py	/^    def __repr__(self):$/;"	m	class:AvgStats	file:
+_camel_re1	utils.py	/^_camel_re1 = re.compile('(.)([A-Z][a-z]+)')$/;"	v
+_camel_re2	utils.py	/^_camel_re2 = re.compile('([a-z0-9])([A-Z])')$/;"	v
+_inner	Callbacks/scheduler.py	/^    def _inner(pos):$/;"	f	function:combine_scheds
+_inner	Callbacks/scheduler.py	/^    def _inner(start, end): return partial(f, start, end)$/;"	f	function:annealer
+_order	Callbacks/core.py	/^    _order=0$/;"	v	class:Callback
+_order	Callbacks/scheduler.py	/^    _order=1$/;"	v	class:ParamScheduler
+accumulate	utils.py	/^    def accumulate(self, run):$/;"	m	class:AvgStats
+add_callbacks	learner.py	/^    def add_callbacks(self, cbs=None, cb_funcs=None):$/;"	m	class:Learner
+after_batch	Callbacks/core.py	/^    def after_batch(self):$/;"	m	class:Recorder
+after_batch	Callbacks/core.py	/^    def after_batch(self):$/;"	m	class:TrainEvalCallback
+after_epoch	Callbacks/core.py	/^    def after_epoch(self):$/;"	m	class:AvgStatsCallback
+after_loss	Callbacks/core.py	/^    def after_loss(self):$/;"	m	class:AvgStatsCallback
+after_step	Callbacks/core.py	/^    def after_step(self):$/;"	m	class:TestCallback
+all_batches	learner.py	/^    def all_batches(self, dl):$/;"	m	class:Learner
+all_batches	runner.py	/^    def all_batches(self, dl):$/;"	m	class:Runner
+all_stats	utils.py	/^    def all_stats(self): return [self.tot_loss.item()] + self.tot_mets$/;"	m	class:AvgStats
+annealer	Callbacks/scheduler.py	/^def annealer(f):$/;"	f
+avg_stats	utils.py	/^    def avg_stats(self): return [o\/self.count for o in self.all_stats]$/;"	m	class:AvgStats
+begin_batch	Callbacks/scheduler.py	/^    def begin_batch(self): $/;"	m	class:ParamScheduler
+begin_epoch	Callbacks/core.py	/^    def begin_epoch(self):$/;"	m	class:AvgStatsCallback
+begin_epoch	Callbacks/core.py	/^    def begin_epoch(self):$/;"	m	class:TrainEvalCallback
+begin_fit	Callbacks/core.py	/^    def begin_fit(self): self.lrs,self.losses = [],[]$/;"	m	class:Recorder
+begin_fit	Callbacks/core.py	/^    def begin_fit(self):$/;"	m	class:TrainEvalCallback
+begin_validate	Callbacks/core.py	/^    def begin_validate(self):$/;"	m	class:TrainEvalCallback
+camel2snake	utils.py	/^def camel2snake(name):$/;"	f
+combine_scheds	Callbacks/scheduler.py	/^def combine_scheds(pcts, scheds):$/;"	f
+create_learner	test.py	/^def create_learner(model_func, loss_func, data, cbs=None, cb_funcs=None):$/;"	f
+data	runner.py	/^    def data(self): return self.learn.data$/;"	m	class:Runner
+download_data	utils.py	/^def download_data(url:str, fname:PathOrStr, data:bool=True, ext:str='.tgz') -> Path:$/;"	f
+download_url	utils.py	/^def download_url(url:str, dest:str, overwrite:bool=False, chunk_size=1024*1024, $/;"	f
+fit	learner.py	/^    def fit(self, epochs):$/;"	m	class:Learner
+fit	runner.py	/^    def fit(self, epochs, learn):$/;"	m	class:Runner
+get_dls	test.py	/^def get_dls(train_ds, valid_ds, bs, **kwargs):$/;"	f
+get_ds	test.py	/^def get_ds(x_train, y_train, x_valid, y_valid):$/;"	f
+get_mnist_data	test.py	/^def get_mnist_data():$/;"	f
+get_model	test.py	/^def get_model(data, lr=0.5, nh=50):$/;"	f
+get_model_func	test.py	/^def get_model_func(lr=0.5): return partial(get_model, lr=lr)$/;"	f
+listify	utils.py	/^def listify(o):$/;"	f
+loss_func	runner.py	/^    def loss_func(self): return self.learn.loss_func$/;"	m	class:Runner
+model	runner.py	/^    def model(self): return self.learn.model$/;"	m	class:Runner
+name	Callbacks/core.py	/^    def name(self):$/;"	m	class:Callback
+one_batch	learner.py	/^    def one_batch(self, xb, yb):$/;"	m	class:Learner
+one_batch	runner.py	/^    def one_batch(self, xb, yb):$/;"	m	class:Runner
+opt	runner.py	/^    def opt(self): return self.learn.opt$/;"	m	class:Runner
+plot_loss	Callbacks/core.py	/^    def plot_loss(self): plt.plot(self.losses)$/;"	m	class:Recorder
+plot_lr	Callbacks/core.py	/^    def plot_lr  (self): plt.plot(self.lrs)$/;"	m	class:Recorder
+reset	utils.py	/^    def reset(self):$/;"	m	class:AvgStats
+sched_cos	Callbacks/scheduler.py	/^def sched_cos(start, end, pos): return start + (1 + math.cos(math.pi*(1-pos))) * (end-start) \/ 2$/;"	f
+sched_exp	Callbacks/scheduler.py	/^def sched_exp(start, end, pos): return start * (end\/start) ** pos$/;"	f
+sched_lin	Callbacks/scheduler.py	/^def sched_lin(start, end, pos): return start + pos*(end-start)$/;"	f
+sched_no	Callbacks/scheduler.py	/^def sched_no(start, end, pos):  return start$/;"	f
+set_param	Callbacks/scheduler.py	/^    def set_param(self):$/;"	m	class:ParamScheduler
+set_runner	Callbacks/core.py	/^    def set_runner(self, run): self.run=run$/;"	m	class:Callback
+train_ds	data.py	/^    def train_ds(self): return self.train_dl.dataset$/;"	m	class:DataBunch
+valid_ds	data.py	/^    def valid_ds(self): return self.valid_dl.dataset$/;"	m	class:DataBunch

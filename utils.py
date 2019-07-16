@@ -3,34 +3,14 @@
 1. Fix passing of fname to download data.
 2. Progress bar for downloading files
 '''
-
 from .imports import *
 
 PathOrStr = Union[Path,str]
 
-# Stats
-class AvgStats():
-    def __init__(self, metrics, in_train): self.metrics,self.in_train = listify(metrics),in_train
-    
-    def reset(self):
-        self.tot_loss,self.count = 0.,0
-        self.tot_mets = [0.] * len(self.metrics)
-        
-    @property
-    def all_stats(self): return [self.tot_loss.item()] + self.tot_mets
-    @property
-    def avg_stats(self): return [o/self.count for o in self.all_stats]
-    
-    def __repr__(self):
-        if not self.count: return ""
-        return f"{'train' if self.in_train else 'valid'}: {self.avg_stats}"
-
-    def accumulate(self, run):
-        bn = run.xb.shape[0]
-        self.tot_loss += run.loss * bn
-        self.count += bn
-        for i,m in enumerate(self.metrics):
-            self.tot_mets[i] += m(run.pred, run.yb) * bn
+# Exceptions
+class CancelTrainException(Exception): pass
+class CancelEpochException(Exception): pass
+class CancelBatchException(Exception): pass
 
 # Formaters
 _camel_re1 = re.compile('(.)([A-Z][a-z]+)')
@@ -84,4 +64,29 @@ def download_url(url:str, dest:str, overwrite:bool=False, chunk_size=1024*1024,
                           f'And re-run your code once the download is successful\n')
             print(timeout_txt)
             import sys;sys.exit(1)
+
+# Stats
+class AvgStats():
+    def __init__(self, metrics, in_train): self.metrics,self.in_train = listify(metrics),in_train
+    
+    def reset(self):
+        self.tot_loss,self.count = 0.,0
+        self.tot_mets = [0.] * len(self.metrics)
+        
+    @property
+    def all_stats(self): return [self.tot_loss.item()] + self.tot_mets
+    @property
+    def avg_stats(self): return [o/self.count for o in self.all_stats]
+    
+    def __repr__(self):
+        if not self.count: return ""
+        return f"{'train' if self.in_train else 'valid'}: {self.avg_stats}"
+
+    def accumulate(self, run):
+        bn = run.xb.shape[0]
+        self.tot_loss += run.loss * bn
+        self.count += bn
+        for i,m in enumerate(self.metrics):
+            self.tot_mets[i] += m(run.pred, run.yb) * bn
+
 
