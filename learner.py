@@ -32,7 +32,8 @@ class Learner():
             self.pred = self.model(self.xb)
             if self('after_pred'): return
             self.loss = self.loss_func(self.pred, self.yb)
-            if self('after_loss') or not self.in_train: return
+            self('after_loss') 
+            if not self.in_train: return
             self.loss.backward()
             if self('after_backward'): return
             self.opt.step()
