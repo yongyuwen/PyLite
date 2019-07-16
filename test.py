@@ -24,5 +24,13 @@ def get_dls(train_ds, valid_ds, bs, **kwargs):
     return (DataLoader(train_ds, batch_size=bs, shuffle=shuffle, **train_kwargs), 
             DataLoader(valid_ds, batch_size=bs*2, **valid_kwargs))
 
+def get_model(data, lr=0.5, nh=50):
+    m = data.train_ds.x.shape[1]
+    model = nn.Sequential(nn.Linear(m,nh), nn.ReLU(), nn.Linear(nh,data.c))
+    return model, optim.SGD(model.parameters(), lr=lr)
 
+def get_model_func(lr=0.5): return partial(get_model, lr=lr)
+
+def create_learner(model_func, loss_func, data, cbs=None, cb_funcs=None):
+    return Learner(*model_func(data), loss_func, data, cbs, cb_funcs)
 
