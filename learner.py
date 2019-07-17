@@ -60,7 +60,8 @@ class Learner():
                 if not self('begin_epoch'): self.all_batches(self.data.train_dl)
 
                 with torch.no_grad(): 
-                    if not self('begin_validate'): self.all_batches(self.data.valid_dl)
+                    if not self('begin_validate'): 
+                        self.all_batches(self.data.valid_dl)
                 self('after_epoch')
 
         except CancelTrainException: self('after_cancel_train')
@@ -70,5 +71,5 @@ class Learner():
     def __call__(self, cb_name):
         res = False
         for cb in sorted(self.cbs, key=lambda x: x._order):
-            res = cb(cb_name) and res
+            res = cb(cb_name) or res # Made changes here that was not in the fastai version: 'and' to 'or'
         return res

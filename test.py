@@ -6,15 +6,14 @@ from .core import *
 
 MNIST_URL='http://deeplearning.net/data/mnist/mnist.pkl'
 
+################## Basic Transforms #####################
 def normalize_to(train, valid):
     m,s = train.mean(),train.std()
     return normalize(train, m, s), normalize(valid, m, s)
-
+    
 def mnist_resize(x): return x.view(-1, 1, 28, 28)
 
-def conv2d(ni, nf, ks=3, stride=2):
-    return nn.Sequential(
-        nn.Conv2d(ni, nf, ks, padding=ks//2, stride=stride), nn.ReLU())
+################## Data #####################
 
 def get_mnist_data():
     path = download_data(MNIST_URL, 'data/mnist', ext='.gz')
@@ -37,13 +36,53 @@ def get_dls(train_ds, valid_ds, bs, **kwargs):
     return (DataLoader(train_ds, batch_size=bs, shuffle=shuffle, **train_kwargs), 
             DataLoader(valid_ds, batch_size=bs*2, **valid_kwargs))
 
+################## General Model and Learner #######################
+def get_learner(model, data, lr=0.6, cbs=None, opt_func=None, loss_func = F.cross_entropy):
+    if opt_func is None: opt_func = optim.SGD
+    opt = opt_func(model.parameters(), lr=lr)
+    learn = Learner(model, opt, loss_func, data, cb_funcs=listify(cbs))
+    return learn
+
 def get_model(data, lr=0.5, nh=50):
     m = data.train_ds.x.shape[1]
     model = nn.Sequential(nn.Linear(m,nh), nn.ReLU(), nn.Linear(nh,data.c))
     return model, optim.SGD(model.parameters(), lr=lr)
 
-def get_model_func(lr=0.5): return partial(get_model, lr=lr)
+# def get_model_func(lr=0.5): return partial(get_model, lr=lr)
 
-def create_learner(model_func, loss_func, data, cbs=None, cb_funcs=None):
-    return Learner(*model_func(data), loss_func, data, cbs, cb_funcs)
+# def create_learner(model_func, loss_func, data, cbs=None, cb_funcs=None):
+#     return Learner(*model_func(data), loss_func, data, cbs, cb_funcs)
+
+################## CNN #######################
+def get_cnn_layers(data, nfs, layer, **kwargs):
+    nfs = [1] + nfs
+    return [layer(nfs[i], nfs[i+1], 5 if i==0 else 3, **kwargs)
+            for i in range(len(nfs)-1)] + [
+        nn.AdaptiveAvgPool2d(1), Lambda(flatten), nn.Linear(nfs[-1], data.c)]
+
+#export
+def conv_layer(ni, nf, ks=3, stride=2, bn=True, **kwargs):
+    layers = [nn.Conv2d(ni, nf, ks, padding=ks//2, stride=stride, bias=not bn),
+              GeneralRelu(**kwargs)]
+    if bn: layers.append(nn.BatchNorm2d(nf, eps=1e-5, momentum=0.1))
+    return nn.Sequential(*layers)
+
+def init_cnn_(m, f):
+    if isinstance(m, nn.Conv2d):
+        f(m.weight, a=0.1)
+        if getattr(m, 'bias', None) is not None: m.bias.data.zero_()
+    for l in m.children(): init_cnn_(l, f)
+
+def init_cnn(m, uniform=False):
+    f = init.kaiming_uniform_ if uniform else init.kaiming_normal_
+    init_cnn_(m, f)
+
+def get_cnn_model(data, nfs, layer, **kwargs):
+    return nn.Sequential(*get_cnn_layers(data, nfs, layer, **kwargs))
+
+#export
+def get_learn_run(nfs, data, lr, layer, cbs=None, opt_func=None, uniform=False, **kwargs):
+    model = get_cnn_model(data, nfs, layer, **kwargs)
+    init_cnn(model, uniform=uniform)
+    return get_learner(model, data, lr=lr, cbs=cbs, opt_func=opt_func)
 
