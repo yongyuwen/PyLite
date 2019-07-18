@@ -1,6 +1,6 @@
 '''
 TO-DO
-1. Check implementation of Smoothed_LR_Find
+1. Check implementation of Smoothed_LR_Find -> Adding debiasing
 '''
 
 from ..utils import *
