@@ -1,4 +1,4 @@
-from .utils import *
+from .Utils import *
 
 def flatten(x): return x.view(x.shape[0], -1)
 def children(m): return list(m.children())

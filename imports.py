@@ -2,13 +2,11 @@ from pathlib import Path
 from IPython.core.debugger import set_trace
 import pickle, gzip, math, torch, matplotlib as mpl
 import matplotlib.pyplot as plt
-from typing import Union, Iterable
-import requests
-import os
-import re
+from typing import Union, Iterable, Any
+import requests, os, re, math, tarfile, mimetypes
 from functools import partial
-import math
-import tarfile
+import PIL
+#from fastai import datasets
 
 # Torch Imports
 from torch import nn, optim, tensor, Tensor

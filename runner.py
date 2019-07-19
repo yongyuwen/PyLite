@@ -1,5 +1,5 @@
-from .utils import *
-from .callbacks import *
+from .Utils import *
+from .Callbacks import *
 
 class Learner():
     def __init__(self, model, opt, loss_func, data):

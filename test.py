@@ -1,10 +1,8 @@
-from .utils import *
+from .Utils import *
 from .data import *
 from .learner import *
 from .Callbacks import *
 from .core import *
-
-MNIST_URL='http://deeplearning.net/data/mnist/mnist.pkl'
 
 ################## Basic Transforms #####################
 def normalize_to(train, valid):
@@ -16,7 +14,7 @@ def mnist_resize(x): return x.view(-1, 1, 28, 28)
 ################## Data #####################
 
 def get_mnist_data():
-    path = download_data(MNIST_URL, 'data/mnist', ext='.gz')
+    path = download_data(MNIST_URL)
     with gzip.open(path, 'rb') as f:
         ((x_train, y_train), (x_valid, y_valid), _) = pickle.load(f, encoding='latin-1')
     return map(tensor, (x_train,y_train,x_valid,y_valid))
