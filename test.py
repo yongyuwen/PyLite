@@ -33,8 +33,8 @@ def get_dls(train_ds, valid_ds, bs, **kwargs):
     train_kwargs = {k.replace('train_', ''): kwargs[k] for k in kwargs if 'valid_' not in k}
     valid_kwargs = {k.replace('valid_', ''): kwargs[k] for k in kwargs if 'train_' not in k}
     shuffle = False if 'sampler' in train_kwargs else True
-    return (DataLoader(train_ds, batch_size=bs, shuffle=shuffle, **train_kwargs), 
-            DataLoader(valid_ds, batch_size=bs*2, **valid_kwargs))
+    return (DataLoader(train_ds, batch_size=bs, shuffle=shuffle, **kwargs, **train_kwargs), 
+            DataLoader(valid_ds, batch_size=bs*2, **kwargs, **valid_kwargs))
 
 ################## General Model and Learner #######################
 def get_learner(model, data, lr=0.6, cbs=None, opt_func=None, loss_func = F.cross_entropy):
@@ -67,6 +67,12 @@ def conv_layer(ni, nf, ks=3, stride=2, bn=True, **kwargs):
     if bn: layers.append(nn.BatchNorm2d(nf, eps=1e-5, momentum=0.1))
     return nn.Sequential(*layers)
 
+def conv_rbn(ni, nf, ks=3, stride=2, bn=True, **kwargs):
+    layers = [nn.Conv2d(ni, nf, ks, padding=ks//2, stride=stride, bias=not bn),
+              GeneralRelu(**kwargs)]
+    if bn: layers.append(RunningBatchNorm(nf))
+    return nn.Sequential(*layers)
+
 def init_cnn_(m, f):
     if isinstance(m, nn.Conv2d):
         f(m.weight, a=0.1)
@@ -86,3 +92,43 @@ def get_learn_run(nfs, data, lr, layer, cbs=None, opt_func=None, uniform=False, 
     init_cnn(model, uniform=uniform)
     return get_learner(model, data, lr=lr, cbs=cbs, opt_func=opt_func)
 
+# LSUV
+# Need to implement the LSUV
+class ConvLayer(nn.Module):
+    def __init__(self, ni, nf, ks=3, stride=2, sub=0., **kwargs):
+        super().__init__()
+        self.conv = nn.Conv2d(ni, nf, ks, padding=ks//2, stride=stride, bias=True)
+        self.relu = GeneralRelu(sub=sub, **kwargs)
+    
+    def forward(self, x): return self.relu(self.conv(x))
+    
+    @property
+    def bias(self): return -self.relu.sub
+    @bias.setter
+    def bias(self,v): self.relu.sub = -v
+    @property
+    def weight(self): return self.conv.weight
+
+def get_batch(dl, run):
+    run.xb,run.yb = next(iter(dl))
+    for cb in run.cbs: cb.set_runner(run)
+    run('begin_batch')
+    return run.xb,run.yb
+
+def find_modules(m, cond):
+    if cond(m): return [m]
+    return sum([find_modules(o,cond) for o in m.children()], [])
+
+def is_lin_layer(l):
+    lin_layers = (nn.Conv1d, nn.Conv2d, nn.Conv3d, nn.Linear, nn.ReLU)
+    return isinstance(l, lin_layers)
+
+
+def lsuv_module(m, xb):
+    h = Hook(m, append_stat)
+
+    while mdl(xb) is not None and abs(h.mean)  > 1e-3: m.bias -= h.mean
+    while mdl(xb) is not None and abs(h.std-1) > 1e-3: m.weight.data /= h.std
+
+    h.remove()
+    return h.mean,h.std
