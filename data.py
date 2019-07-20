@@ -25,3 +25,32 @@ class TabularDataBunch(DataBunch):
     def __init__(self, train_dl, valid_dl, c=None):
         super().__init__(train_dl, valid_dl, c)
         if not self.c: self.c = self.train_ds.y.max().item() + 1
+
+
+class ItemList(ListContainer):
+    def __init__(self, items, path='.', tfms=None):
+        super().__init__(items)
+        self.path,self.tfms = Path(path),tfms
+
+    def __repr__(self): return f'{super().__repr__()}\nPath: {self.path}'
+    
+    def new(self, items, cls=None):
+        if cls is None: cls=self.__class__
+        return cls(items, self.path, tfms=self.tfms)
+    
+    def  get(self, i): return i
+    def _get(self, i): return compose(self.get(i), self.tfms)
+    
+    def __getitem__(self, idx):
+        res = super().__getitem__(idx)
+        if isinstance(res,list): return [self._get(o) for o in res]
+        return self._get(res)
+
+
+class ImageList(ItemList):
+    @classmethod
+    def from_files(cls, path, extensions=None, recurse=True, include=None, **kwargs):
+        if extensions is None: extensions = image_extensions
+        return cls(get_files(path, extensions, recurse=recurse, include=include), path, **kwargs)
+    
+    def get(self, fn): return PIL.Image.open(fn)

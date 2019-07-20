@@ -38,6 +38,11 @@ def ifnone(a:Any,b:Any)->Any:
     "`a` if `a` is not None, otherwise `b`."
     return b if a is None else a
 
+def compose(x, funcs, *args, order_key='_order', **kwargs):
+    key = lambda o: getattr(o, order_key, 0)
+    for f in sorted(listify(funcs), key=key): x = f(x, **kwargs)
+    return x
+
 # Stats
 class AvgStats():
     def __init__(self, metrics, in_train): self.metrics,self.in_train = listify(metrics),in_train
